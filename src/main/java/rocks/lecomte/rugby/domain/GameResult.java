@@ -11,10 +11,21 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class GameResult implements Serializable, Comparable<GameResult> {
     private Round round;
-    private String year, teamA, teamB, scoreA, scoreB, triesA, triesB;
+    private String year, teamA, teamB, triesA, triesB;
+            private Double scoreA, scoreB;
     private Double pointsA, pointsB;
     private String venue;
 
+    public double result() {
+        double diff = scoreA - scoreB;
+        if (diff > 0) {
+          return 1;
+        } else if (diff== 0) {
+            return 0.5;
+        }
+
+        return 0;
+    }
     @Override
     public int compareTo(GameResult gr) {
 

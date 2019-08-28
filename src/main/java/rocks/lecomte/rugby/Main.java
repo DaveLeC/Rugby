@@ -1,29 +1,40 @@
 package rocks.lecomte.rugby;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import rocks.lecomte.rugby.domain.GameResult;
 import rocks.lecomte.rugby.domain.SimpleGameResult;
 import rocks.lecomte.rugby.impl.PickAndGoResultObtainer;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
 public class Main {
-    public static void main(String... args) {
-        PickAndGoResultObtainer pagro = new PickAndGoResultObtainer();
-        averageForAllYears(pagro);
+    public static void main(String... args) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        GameResult[] allyears = mapper.readValue(new File("data/wrc.json"), GameResult[].class);
+        String teamA = "NZL";
+        String teamB = "WAL";
+
+        System.out.println(winProbability(teamA, teamB, allyears));
+        System.out.println(Arrays.stream(allyears).filter(r -> r.getTeamA().compareTo(teamA) == 0 && r.getTeamB().compareTo(teamB) == 0 ||
+                r.getTeamA().compareTo(teamB) == 0 && r.getTeamB().compareTo(teamA) == 0).collect(Collectors.toList()));
+        //averageForAllYears();
     }
 
-    static void averageForAllYears(PickAndGoResultObtainer pagro) {
-        List<GameResult> allyears = pagro.findByCompetitionAndYears("WRC", "1987", "1991", "1995", "1999",
-                "2003", "2007", "2011", "2015");
 
+    static double winProbability(String teamA, String teamB, GameResult[] allyears) {
+        return Arrays.stream(allyears).filter(r -> r.getTeamA().compareTo(teamA) == 0 && r.getTeamB().compareTo(teamB) == 0 ||
+                r.getTeamA().compareTo(teamB) == 0 && r.getTeamB().compareTo(teamA) == 0)
+                .mapToDouble(r -> r.result()).average().orElse(-1);
+    }
+
+    static void averageForAllYears(GameResult[] allyears) {
         List<SimpleGameResult> results = new LinkedList<>();
-        allyears.stream().forEach(r -> {
+
+        Arrays.stream(allyears).forEach(r -> {
             results.add(new SimpleGameResult(r.getTeamA(), r.getPointsA()));
             results.add(new SimpleGameResult(r.getTeamB(), r.getPointsB()));
         });
@@ -32,7 +43,7 @@ public class Main {
 
         List<SimpleGameResult> averages = new LinkedList<>();
         groupedBy.forEach((k, v) -> averages.add(
-                new SimpleGameResult(k, v.stream().mapToDouble(SimpleGameResult::getPoints).sum() / v.size())));
+                new SimpleGameResult(k, v.stream().mapToDouble(SimpleGameResult::getPoints).average().getAsDouble())));
         averages.sort((a, b) -> b.getPoints().compareTo(a.getPoints()));
         averages.forEach(System.out::println);
     }
