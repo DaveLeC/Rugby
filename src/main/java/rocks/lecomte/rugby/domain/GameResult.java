@@ -1,19 +1,19 @@
 package rocks.lecomte.rugby.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
 @EqualsAndHashCode
 public class GameResult implements Serializable, Comparable<GameResult> {
     private Round round;
-    private String year, teamA, teamB, scoreA, scoreB, triesA, triesB, pointsA, pointsB, venue;
+    private String year, teamA, teamB, scoreA, scoreB, triesA, triesB;
+    private Double pointsA, pointsB;
+    private String venue;
 
     @Override
     public int compareTo(GameResult gr) {

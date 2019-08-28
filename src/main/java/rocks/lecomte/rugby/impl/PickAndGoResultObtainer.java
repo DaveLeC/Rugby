@@ -100,7 +100,8 @@ Venue
 
         return new GameResult(round, year, teams[0].trim(), teams[1].trim(),
                 score[0].trim(), score[1].trim(), tries[0].trim(),
-                tries[1].trim(), points[0].trim(), points[1].trim(), venue.trim()) {
+                tries[1].trim(), Double.valueOf(points[0].trim()),
+                Double.valueOf(points[1].trim()), venue.trim()) {
         };
     }
 }

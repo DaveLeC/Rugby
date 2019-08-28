@@ -1,10 +1,14 @@
 package rocks.lecomte.rugby.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.junit.Assert;
 import org.junit.Test;
 import rocks.lecomte.rugby.domain.GameResult;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -47,5 +51,11 @@ public class PickAndGoResultObtainerTest {
 
     }
 
+    @Test
+    public void fromJson() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+      System.out.println(mapper.readValue(new File("data/wrc.json"), GameResult[].class).length);
+    }
 
 }
